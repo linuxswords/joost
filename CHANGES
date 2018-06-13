@@ -1,0 +1,272 @@
+Changes since 20090315
+- Bugfixes: 2840109, 2840121, 2840583, 2843559
+- changed the net.sf.joost.TransformerHandlerResolver interface such that both
+  resolve(..) methods will now receive both a javax.xml.transform.ErrorListener
+  parameter and a javax.xml.transform.URIResolver parameter (fixes 2843559)
+
+Changes since 20081012
+- Bugfixes: 2403950, 2687662, 2687675
+
+Changes since 20080528
+- Bugfixes: 1993357, 1993925, 1994290, 2144242, 2157146
+- added disable-output-escaping support (mainly for XSLT filter processes)
+
+Changes since 20080309
+- Bugfixes: 1928572, 1951834, 1951836, 1975067
+
+Changes since 20070718
+- Bugfixes: 1758424, 1810643, 1824901, 1824909, 1899453
+- added stx:doctype
+- replaced attribute 'case' of stx:analyze-text with 'flags'
+   * case="insensitive" must be specified now using flags="i"
+   * multiline mode is now by default off and must be enabled via flags="m"
+- API: the default constructor of net.sf.joost.trax.TransformerFactoryImpl does
+  not longer throw an IOException
+- API: removed class net.sf.joost.plugins.traxfilter.XalanReusableTH 
+  and field net.sf.joost.plugins.traxfilter.THResolver.USE_INTERNAL_XALAN_TH
+
+Changes since 20070621
+- added interface OutputURIResolver (Feature request 1170466)
+- the binary should be Java 1.4 compatible again
+- Bugfix: 1755658
+
+Changes since 20070529
+- Bugfixes: 1730697, 1741087
+- incorporated code from Michael Kay's Saxon to support full XPath 2.0
+  regular expressions
+- added matches(), replace(), tokenize()
+
+Changes since 20070527
+- added stx:analyze-text, stx:match, stx:no-match, sf:regex-group
+
+Changes since 20061005
+- Bugfixes: 1574978, 1689706
+- Optimization when processing the attributes of literal result elements
+
+Changes since 20060505
+- Bugfixes: 1489567, 1509455
+
+Changes since 20060205
+- Added special element joost:script for script support (e.g. Javascript)
+  (thanks again to Fikin).
+- Bugfix: 1446221
+
+Changes since 20050521
+- added plugin ability for net.sf.joost.TransformerHandlerResolver classes;
+  no need any more to programatically register filter implementations, Joost
+  will automatically detect them after their registration as Java 1.3 services,
+  i.e. in the META-INF/services/net.sf.joost.TransformerHandlerResolver file
+  (thanks to Fikin).
+- xslt and stx filters support transformers reusage (thanks to Fikin).
+- added support for Unicode surrogate pairs
+- output numbers in a XML Schema conformant way (prevent scientific notation)
+  (Feature request 1337383)
+- added 'append' attribute to stx:result-document
+- Fix for #1215468 required a change in the TransformerHandlerResolver interface:
+  added URIResolver parameter in 
+  TransformerHandler resolve(String, String, String, URIResolver, Hashtable)
+- Bugfixes: 1215468, 1365639
+
+Changes since 20041107
+- added command line switch -noext and TrAX attribute ALLOW_EXTENSION_FUNCTIONS
+  to prevent/allow the call of Java extension functions
+- changed url(...) specification for the 'filter-src' attribute:
+  the part between 'url(' and ')' will be evaluated as an STXPath expression.
+  This means unquoted URLs like in "url(filename.xsl)" won't work anymore,
+  use "url('filename.xsl')" instead.
+- relaxed buffer restrictions: allow adding non-well-formed XML within a
+  single stx:result-buffer instruction; the buffer contents must be
+  well-formed when stx:process-buffer is called (thanks to Maurice Jumelet)
+- Bugfixes: 1086639, 1086657, 1093383, 1107878, 1170453, 1170454, 1170668
+
+Changes since 20041002
+- Joost now requires Java 1.4 (or above)
+- generate character references for characters that can't be represented
+  in the current encoding
+- renamed attribute 'stylesheet-prefix' to 'sheet-prefix' in 
+  stx:namespace-alias
+- renamed value '#stylesheet' to '#sheet' for the 'base' attribute of
+  stx:process-document
+- changed Joost's extension namespace to "http://joost.sf.net/extension"
+- added experimental "joost:html" output method (in that extension namespace)
+- added command line switch -nodecl
+- added 'terminate', 'logger', and 'level' attributes to stx:message
+- made Commons Logging usage optional
+- Bugfix: 1056611
+  
+Changes since 20040330
+- boosted Joost's performance about 25% 
+  (major internal refactoring contributed by Thomas Behrends)
+- added 'select' attribute to stx:message, stx:comment, and 
+  stx:processing-instruction
+- added filter-method "http://www.ietf.org/rfc/rfc2616.txt#POST"
+- flush output on error
+- Bugfixes: 936354, 1003790
+
+Changes since 20031219
+- added command line switches: -time, -m
+- Bugfixes: 869207, 890961, 925215
+
+Changes since 20030914
+- allow nested XPath comments (: ... :)
+  (yet not covered by the STX spec)
+- added escape-uri()
+- added 'output-method' attribute to stx:transform and stx:result-document,
+  added support for text output (spec change 2003-12-08)
+- renamed attribute 'encoding' to 'output-encoding' in stx:result-document
+  (dito)
+- Changes according to WD-xpath-functions-20031112:
+  * renamed get-in-scope-namespaces() to get-in-scope-prefixes()
+  * swapped arguments of get-namespace-uri-for-prefix()
+  * don't drop NaNs in sum(), avg(), min(), max()
+  * return "" instead of the empty sequence if the empty sequence is passed
+    to name(), local-name(), namespace-uri()
+- command line: allow '-' for stdin; support multiple STX sheets to form a
+  transformation chain
+- Bugfixes: 828230, 828958, 828959, 828969, 861524
+
+Changes since 20030908
+- added string-join(), ends-with(), string-pad(), exists(), index-of(), 
+  insert-before(), remove()
+- removed prefix() (use substring-before(name($arg),':') instead)
+
+Changes since 20030623
+- renamed attributes: 'filter' to 'filter-method', 'src' to 'filter-src'
+- added 'filter-method' and 'filter-src' attributes to stx:process-document
+- added filter methods for STX (http://stx.sourceforge.net/2002/ns) and
+  SAX parsing (http://xml.org/sax)
+- added stx:namespace-alias (in the result the original prefix, aka
+  stylesheet-prefix will be used, but mapped to the new namespace)
+- added min(), max(), avg()
+- added URIResolver support for stx:process-document and stx:include
+- Internal: added XMLReader parameter to Processor constructor;
+  Fixed SAXSource usage in TransformerFactory.newTransformer(...)
+- Bugfix: 765301
+
+Changes since 20030502
+- added 'separator' attribute to stx:value-of; 
+  since @separator defaults to " ", the default behaviour changed if 
+  @select evaluates to a sequence
+- implemented stx:include
+- added 'filter' and 'src' attributes to stx:process-buffer, 
+  stx:process-children, and stx:process-self;
+  enabled built-in passing of SAX events to a (JAXP conformant) XSLT engine
+- added TransformerHandlerResolver interface for using custom
+  SAX TransformerHandlers 
+  (see API doc for this interface, as well as the samples.NSFilter example)
+- added filter-available()
+- renamed attribute 'default-stxpath-namespace' to 
+  'stxpath-default-namespace' in stx:transform (spec change 2003-05-27)
+- added 'exclude-result-prefixes" to stx:transform
+- changed type of the 'href' attribute in stx:result-document from 
+  expression to {uri-reference} (spec change 2003-06-09)
+- small change in sum(): discard NaN values
+- allow stx:param as child of stx:group (spec change 2003-06-20)
+  and remove the requirement that template parameters have to occur first in
+  a template before any other children (I don't know where I got this from)
+- added (partial) support for TrAX output properties
+- added support for Java extension functions
+- added Joost extension function sequence(), which converts a Java array or
+  a java.util.List object to a sequence; 
+  extension namespace is "http://joost.sf.net/functions"
+- Bugfix: 748089
+
+Changes since 20030320
+- increased performance by switching to a new processing model
+- changed stx:for-each to stx:for-each-item; removed current-item();
+  position() doesn't change inside for-each-item
+- removed level() and get-node()
+- removed stx:options, moved its attributes to stx:transform and stx:group
+- in stx:template and stx:procedure:
+  changed visibility=private|public|global to local|group|global,
+  added public=yes|no 
+- all functions are now in the default namespace for STX functions
+  http://stx.sourceforge.net/2003/functions 
+  (but there's no need to change any STX transformation sheet, because
+  this namespace will be used automatically)
+- Bugfixes: 723018, 723024, 728919, 730112
+- switched from Log4J to Commons-Logging;
+  removed logging configuration from Main completely (in release versions)
+
+Changes since 20030224
+- added 'encoding' attribute to stx:result-document;
+  missing directories will now be created automatically
+- added stx:while
+- change for buffers: allow stx:process-buffer inside of stx:result-buffer
+  for the same buffer; its new contents is available not before the buffer
+  has been completely filled (stx:result-buffer has finished)
+- change for stx:process-self: if no group is specified then the base
+  group for matching is the current group, not the previous group
+- removed current(), added current-item() for accessing the current item
+  inside of stx:for-each; a location path accesses *always* the ancestor stack
+- added node-kind()
+- made level() and get-node() deprecated
+- removed deprecated location path components
+- Bugfixes: 697408, 699541, 702885, 703059, 705697
+
+Changes since 20030203
+- added support for xml:space within stylesheets
+- added stx:for-each and the current() function
+- added get-namespace-uri-for-prefix() and get-in-scope-namespaces()
+- allow contents in stx:buffer
+- made all explicit axes (ancestor, parent, namespace) and '.' as
+  location step within paths deprecated
+- Bugfixes: 681576, 687163, 687489, 687628, 691652, 692087
+
+Changes since 20030121
+- added floor(), ceiling(), round()
+- added stx:process-siblings, stx:procedure, stx:call-procedure, stx:message
+- made text() location step (data accessor) deprecated
+
+Changes since 20021223
+- added 'required' attribute to stx:param
+- added 'base' attribute to stx:process-document, 
+  changed type of 'href' to expression
+- added stx:result-document
+- renamed
+  * stx:element-start to stx:start-element
+  * stx:element-end to stx:end-element
+  * stx:options' @no-match-events to @pass-through
+  * stx:template's @recursion-entry-point to @new-scope
+- implemented sequence data type
+- sequence functions: empty(), item-at(), subsequence(), count(), sum()
+- other functions: string(), number(), boolean()
+- variables and parameters will be default initialized with the empty sequence
+- implemented full location paths in data accessors (except ancestor)
+
+Changes since 20021128
+- added 'markup' attribute to stx:text
+- removed strict-mode (stx:transform, stx:group)
+- added support for named groups
+- added stx:process-document
+- changed: buffers (stx:process-buffer) don't create their own ancestor stack
+- added support for template parameters, stx:with-param
+
+Changes since 20021107
+- added stx:choose, stx:when, stx:otherwise, stx:else
+- added stx:comment, stx:processing-instruction
+- stx:cdata, stx:variable, stx:assign, stx:param, stx:attribute 
+  may now contain arbitrary text producing instructions (aka "text template")
+- added translate()
+
+Changes since 20021104
+- added support for global parameters (stx:param)
+- Bugfixes: 634388, 634440
+
+Changes since 20021018
+- implemented the 'attributes' attribute of stx:copy
+- new functions: 
+  prefix, starts-with, contains, substring, substring-before, substring-after
+- CDATA processing: pattern cdata() and instruction stx:cdata
+- buffers: stx:buffer, stx:result-buffer, stx:process-buffer
+- stx:element
+- made strict-mode deprecated (stx:transform, stx:group)
+- Bugfix: mappings will be reported for all namespaces currently declared,
+  not only for those used in element and attribute names
+  (see bug 625480)
+
+Changes since 20020828
+- added stx:process-attributes, 
+  implemented attribute patterns (<stx:template match="foo/@bar"> etc.)
+- changed STX namespace to "http://stx.sourceforge.net/2002/ns"
+- made up the TrAX implementation

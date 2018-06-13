@@ -1,0 +1,956 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- $Id: index.html,v 1.102 2009/09/13 20:29:56 obecker Exp $ -->
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <title>Joost - The Streaming XML Transformer</title>
+      <style type="text/css">
+        body { 
+          font-family: sans-serif; 
+          background-color: #eeeeff; 
+        }
+        h1 { 
+          color: yellow; 
+          background-color: #000066; 
+          text-align: center;
+          padding: 4pt;
+        }
+        h2 { 
+          color: white; 
+          background-color: #000066; 
+          padding: 3pt; 
+          font-size: 105%; 
+        }
+        h3 {
+          color: #000066;
+          font-size: 100%; 
+          padding: 0px 10px 0px 10px;
+          margin: 10px 0px 0px 0px;
+        }
+        .contents {
+          float: right; 
+          width: 280px; 
+          background-color: #ffffff; 
+          padding: 5px; 
+          margin: 0 0 10px 10px;
+        }
+        .contents li {
+          line-height: 1.25em;
+        }
+        .contents li li {
+          font-size: 85%;
+        }
+      </style>
+   </head>
+   <body link="#993333" vlink="#663333">
+      <h1>Joost</h1>
+
+      <div class="contents">
+        <h3>Contents</h3>
+        <ul>
+          <li><a href="#gettingstarted">Getting started</a></li>
+          <li><a href="#features">Features</a>
+            <ul>
+              <li><a href="#stx-elements">Supported STX elements</a></li>
+              <li><a href="#stx-functions">Supported STXPath functions</a></li>
+            </ul>
+          </li>
+          <li><a href="#limitations">Limitations</a></li>
+          <li><a href="#extensions">Extensions</a>
+            <ul>
+              <li><a href="#html">HTML output</a></li>
+              <li><a href="#doe">Disable output escaping</a></li>
+              <li><a href="#scripting">Scripting</a></li>
+              <li><a href="#java">Invoking Java methods</a></li>
+              <li><a href="#filters">Using external SAX2 filters</a></li>
+              <li><a href="#outputuriresolver">OutputURIResolver</a></li>
+            </ul>
+          </li>
+          <li><a href="#examples">Examples</a></li>
+          <li><a href="#resources">Resources</a></li>
+          <li><a href="#contributors">Contributors</a></li>
+        </ul>
+      </div>
+    
+      <p>
+      This page contains information about the world's first prototypic
+      Java implementation of the
+      <strong><a target="_blank"
+      href="http://stx.sourceforge.net">Streaming Transformations
+      for XML (STX)</a></strong> language.
+      It is intended as a reference implementation which
+      demonstrates the functionality of STX. 
+      <em>Joost</em> is developed and maintained by
+      <a target="_blank" href="http://www.obqo.de/">Oliver Becker</a>.
+      </p>
+
+      <!-- Have to make the StDB working again!
+      <table cellspacing="10pt" width="15%" align="right"
+             style="background-color: #ffffee;
+                    margin-left: 10pt; margin-bottom: 10pt">
+        <tr><td>
+          <em>Check out <strong>
+              <a href="http://joost.sourceforge.net/StDB/">StDB</a></strong>,
+              a debugger for STX based on Joost</em>
+        </td></tr>
+      </table>
+      -->
+
+        
+      <p>The latest version <strong>0.9.1</strong> was created on 2009-09-26
+      and may be <strong><a target="_blank"
+         href="https://sourceforge.net/project/showfiles.php?group_id=55258">
+      downloaded here</a></strong>.</p>
+      <p>
+      <em>Joost</em> is released under the Mozilla Public License 1.1.
+      Have a look at the
+      <a target="_blank"
+         href="https://sourceforge.net/projects/joost">project page</a>
+      for further information. Any questions concerning <em>Joost</em> may be
+      asked on the
+      <a target="_blank"
+         href="http://lists.sourceforge.net/lists/listinfo/joost-help">joost-help</a>
+      mailing list.
+      </p>
+
+
+      <h2><a name="gettingstarted">Getting started</a></h2>
+
+      <p>
+      In order to run <em>Joost</em> you need additionally
+      <ul>
+         <li>
+            a SAX2 Parser, for example Crimson (already included in
+            Java 1.4 or downloadable separately on
+            <a target="_blank"
+               href="http://java.sun.com/xml/downloads/javaxmlpack.html">Sun's
+            Java XML Pack page</a>),
+            <a target="_blank"
+               href="http://xml.apache.org/xerces2-j/">Xerces</a>
+            from Apache XML, or &#xC6;lfred2 from the
+            <a target="_blank"
+               href="http://www.gnu.org/software/classpathx/jaxp/">GNU JAXP
+            Project</a>
+         </li>
+         <li>
+           <a target="_blank" 
+           href="http://jakarta.apache.org/commons/discovery/">Commons 
+           Discovery</a> from Apache Jakarta, if you want to use external
+           filters such as XSLT transformations
+         </li>
+         <li>
+           the <a target="_blank" href="http://jakarta.apache.org/bsf/">Bean 
+           Scripting Framework</a> from Apache Jakarta and a proper scripting
+           engine, if you want to use the experimental Script support
+         </li>
+         <li>
+            optionally (see below) the <a target="_blank"
+            href="http://jakarta.apache.org/commons/logging/">Commons Logging
+            Component</a> from Apache Jakarta</li>
+         <li>and of course a Java platform, at least version 1.4</li>
+      </ul>
+      <p>
+      Run <em>Joost</em> with<br>
+      <strong><code>java net.sf.joost.Main [opts] <em>xml-source stx-sheet</em>
+      [pars] {<em>stx-sheet</em> [pars]}</code></strong>
+      <br>
+      or simply<br>
+      <strong><code>java -jar joost.jar [opts] <em>xml-source stx-sheet</em>
+      [pars] {<em>stx-sheet</em> [pars]}</code></strong>
+      </p>
+      <p>The dash character "<code>-</code>" for the <code>xml-source</code>
+      parameter denotes the standard input. The specification of multiple
+       <code>stx-sheet</code>s creates a transformation chain.
+      Global parameters for each STX transformation sheet may be specified
+      by adding command line arguments (<code>pars</code>) of the form
+      <strong><code>parameter=value</code></strong> (on Windows enclosed
+      in additional quotes: <code>"parameter=value"</code>) directly after
+      each <code>stx-sheet</code>. <code>value</code>
+      is interpreted as a string, not as an expression.</p>
+      <p>The list of possible options includes</p>
+      <table>
+        <tr>
+          <td rowspan="9">&nbsp;&nbsp;&nbsp;</td>
+          <td valign="top"><strong><code>-help</code></strong></td>
+          <td rowspan="9">&nbsp;</td>
+          <td>print a help message</td>
+        </tr>
+        <tr>
+          <td valign="top"><strong><code>-version</code></strong></td>
+          <td>print the version information and exit</td>
+        </tr>
+        <tr>
+          <td valign="top"><strong><code>-o &lt;filename&gt;</code></strong></td>
+          <td>write the result to the file &lt;filename&gt;</td>
+        </tr>
+        <tr>
+          <td valign="top"><strong><code>-m &lt;classname&gt;</code></strong></td>
+          <td>use a &lt;classname&gt; object for <code>stx:message</code>
+              output (unless the <code>stx:message</code> element has
+              a <code>logger</code> attribute and logging is available,
+              see below)<br>
+              this class must implement the interface
+              <code>net.sf.joost.emitter.StxEmitter</code></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong><code>-nodecl</code></strong></td>
+          <td>don't include an XML declaration in the result</td>
+        </tr>
+        <tr>
+          <td valign="top"><strong><code>-noext</code></strong></td>
+          <td>prevent calls on Java extension functions and script functions</td>
+        </tr>
+        <tr>
+          <td valign="top"><strong><code>-doe</code></strong></td>
+          <td>enable <code>disable-output-encoding</code> support,
+              see <a href="#doe">below</a></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong><code>-time</code></strong></td>
+          <td>print timing information on standard error output</td>
+        </tr>
+        <tr>
+          <td valign="top"><strong><code>-pdf</code></strong></td>
+          <td>pass the result to FOP for PDF generation (requires -o),
+              see below</td>
+        </tr>
+      </table>
+
+      <p>If Commons Logging is available, <em>Joost</em> will log possible
+      runtime errors and messages produced with
+      <code>stx:message/@logger</code> using the appropriate logger objects.
+      You can check whether logging is available or not by running
+      <em>Joost</em> with the <code>-help</code> or <code>-version</code>
+      command line options.</p>
+        
+      <p><em>Joost</em> is able to pass its output to <a target="_blank"
+      href="http://xml.apache.org/fop/">FOP</a> for producing PDF output
+      from a stream of XSLFO SAX events. To use this function you
+      have to add fop.jar, batik.jar and avalon.jar (FOP 0.20.5 comes
+      with avalon-framework-cvs-20020806.jar) to your classpath.
+      It is not possible to change FOP's verbosity on the command
+      line at the moment (<em>Joost</em> sets it to <code>warn</code>).
+      </p>
+
+      <p><em>Joost</em> implements the TrAX interfaces from JAXP 1.1.
+      In order to create a <em>Joost</em> transformer you have to set the Java
+      property <code>javax.xml.transform.TransformerFactory</code>
+      to the value <code>net.sf.joost.trax.TransformerFactoryImpl</code>.
+      </p>
+
+      <hr width="25%" align="left" size="1" noshade>
+      <span style="font-size: small">
+      <sup>*)</sup>
+      Joost [pronounced <em>yohst</em>] meant once
+      <em>Joost is Oli's Original Streaming Transformer</em>
+      and was inspired by the given name a good fiend's little son.
+      The work on this tool started in 2002. It is not related to joost.com 
+      which appeared at the end of 2006.
+      </span>
+
+
+      <h2><a name="features">Features</a></h2>
+      <p><a name="stx-elements"></a>
+      <strong><em>Supported stx elements</em></strong> (and their attributes)
+      in the namespace <code>http://stx.sourceforge.net/2002/ns</code> in
+      alphabetical order
+      <ul>
+      <li>stx:analyze-text (select)<br>
+          stx:match ({regex}, {flags}?) <br>
+          stx:no-match</li>
+      <li>stx:assign (name, select)</li>
+      <li>stx:attribute ({name}, {namespace}?, select)</li>
+      <li>stx:buffer (name)</li>
+      <li>stx:call-procedure (name, group?)</li>
+      <li>stx:cdata</li>
+      <li>stx:choose<br>
+          stx:when (test)<br>
+          stx:otherwise</li>
+      <li>stx:comment (select?)</li>
+      <li>stx:copy (attributes?)</li>
+      <li>stx:doctype ({name}, {public-id}?, {system-id}?)</li>
+      <li>stx:end-element ({name}, {namespace}?)</li>
+      <li>stx:element (name, namespace?)</li>
+      <li>stx:for-each-item (name, select)</li>
+      <li>stx:group (name?, pass-through?, strip-space?,
+          recognize-cdata?)</li>
+      <li>stx:if (test)<br>
+          stx:else</li>
+      <li>stx:include (href)</li>
+      <li>stx:message (select?, {terminate}?, logger?, level?) &ndash;
+          (<em>prints its content to standard error output or uses the
+          specified logger with the given level</em>)
+          <br>
+          The <code>terminate</code> attribute behaves as in XSLT.
+          <br>
+          The <code>logger</code> and <code>level</code> attributes can be
+          used to produce log messages that will be send to a special Log
+          object. The name of this object must be specified in the
+          <code>logger</code> attribute. The <code>level</code> attribute
+          must be one of the values <code>trace</code>, <code>debug</code>,
+          <code>info</code>, <code>warn</code>, <code>error</code>, or
+          <code>fatal</code>. <em>Joost</em> will use the Commons Logging
+          framework if it can be found on the classpath. Otherwise the
+          attributes <code>logger</code> and <code>level</code> will simply
+          be ignored, i.e. the <code>stx:message</code> instruction behaves
+          as if these attributes weren't present. Since Commons Logging is
+          just a wrapper for other logging facilities, <em>Joost</em> doesn't
+          provide any mechanisms to configure the underlying logger.
+          </li>
+      <li>stx:namespace-alias (sheet-prefix, result-prefix) &ndash;
+          (<em>uses the sheet-prefix in the result</em>)</li>
+      <li>stx:param (name, select?, required?)</li>
+      <li>stx:procedure (name, public?, visibility?, new-scope?)</li>
+      <li>stx:process-attributes (group?)</li>
+      <li>stx:process-buffer (name, group?, filter-method?, filter-src?)</li>
+      <li>stx:process-children (group?, filter-method?, filter-src?)</li>
+      <li>stx:process-document (href, base?, group?,
+                                filter-method?, filter-src?)</li>
+      <li>stx:process-self (group?, filter-method?, filter-src?)</li>
+      <li>stx:process-siblings (group?, while?, until?)</li>
+      <li>stx:processing-instruction ({name}, select?)</li>
+      <li>stx:result-buffer (name, clear?)</li>
+      <li>stx:result-document (href, output-method?, output-encoding?, append?)
+          <br>
+          <em><code>append = "yes"|"no"</code></em> is a <em>Joost</em> 
+          specific extension. If set to <code>yes</code> then the result stream 
+          will be appended to a probably existing file (specified by the
+          <code>href</code> attribute). <em>Joost</em> won't produce an XML 
+          declaration in this case, regardless if there is already a file to 
+          append to or not. Note that the resulting document can't be
+          well-formed XML since it doesn't have a single root element. If
+          <code>append</code> is set to <code>no</code> (the default) it will 
+          replace the old file.</li>
+      <li>stx:start-element ({name}, {namespace}?)</li>
+      <li>stx:template (match, priority?, public?, visibility?,
+                        new-scope?)</li>
+      <li>stx:text</li>
+      <li>stx:transform (version, stxpath-default-namespace?,
+          output-method?, output-encoding?, pass-through?, strip-space?,
+          recognize-cdata?, exclude-result-prefixes?)</li>
+      <li>stx:value-of (select, separator?)</li>
+      <li>stx:variable (name, select?, keep-value?)</li>
+      <li>stx:while (test)</li>
+      <li>stx:with-param (name, select?)</li>
+      </ul>
+      <p>
+      <strong><em>Built-in extension elements</em></strong><br>
+      A built-in extension element must be used with a fully-qualified
+      name and the prefix bound to the namespace
+      <code>http://joost.sf.net/extension</code>
+      <ul>
+      <li>joost:script (prefix, language, url?)<br>
+          defines a script, see <a href="#scripting">Scripting</a> in the 
+          <em>Extensions</em> section below.</li>
+      </ul> 
+      
+      <hr>
+
+      <p><a name="stx-functions"></a>
+      <strong><em>Supported STXPath functions</em></strong> in alphabetical
+      order
+      <ul>
+      <li>avg(sequence)</li>
+      <li>boolean(object)</li>
+      <li>ceiling(number)</li>
+      <li>concat(string, string+)</li>
+      <li>contains(string, string)</li>
+      <li>count(sequence)</li>
+      <li>empty(sequence)</li>
+      <li>ends-with(string, string)</li>
+      <li>escape-uri(string, boolean)</li>
+      <li>exists(sequence)</li>
+      <li>false()</li>
+      <li>filter-available(string)</li>
+      <li>floor(number)</li>
+      <li>get-in-scope-prefixes(node)</li>
+      <li>get-namespace-uri-for-prefix(string, node)</li>
+      <li>has-child-nodes()</li>
+      <li>index-of(sequence, object)</li>
+      <li>insert-before(sequence, number, sequence)</li>
+      <li>item-at(sequence, number)</li>
+      <li>local-name(node?)</li>
+      <li>matches(string, string, string?)</li>
+      <li>max(sequence)</li>
+      <li>min(sequence)</li>
+      <li>name(node?)</li>
+      <li>namespace-uri(node?)</li>
+      <li>node-kind(node)</li>
+      <li>normalize-space(string?)</li>
+      <li>not(boolean)</li>
+      <li>number(object?)</li>
+      <li>position()</li>
+      <li>regex-group(number)</li>
+      <li>remove(sequence, number)</li>
+      <li>replace(string, string, string, string?)</li>
+      <li>round(number)</li>
+      <li>starts-with(string, string)</li>
+      <li>string(object?)</li>
+      <li>string-join(sequence, string)</li>
+      <li>string-length(string?)</li>
+      <li>string-pad(string, number)</li>
+      <li>subsequence(sequence, number, number?)</li>
+      <li>substring(string, string, string?)</li>
+      <li>substring-after(string, string)</li>
+      <li>substring-before(string, string)</li>
+      <li>sum(sequence)</li>
+      <li>tokenize(string, string, string?)</li>
+      <li>translate(string, string, string)</li>
+      <li>true()</li>
+      </ul>
+      <p>
+      <strong><em>Built-in extension functions</em></strong><br>
+      A built-in extension function must be used with a fully-qualified
+      name and the prefix bound to the namespace
+      <code>http://joost.sf.net/extension</code>
+      <ul>
+      <li>sequence(obj)<br>
+          converts a Java array or a <code>java.util.List</code> object to
+          a sequence, see <a href="#ext-sequence">Invoking Java methods</a> in
+          the <em>Extensions</em> section below.</li>
+      </ul> 
+
+
+      <h2><a name="limitations">Limitations</a></h2>
+      <ul>
+         <li>no full Unicode support
+             (missing check for well-formedness of created XML names)</li>
+         <li>the STXPath implemented in this release obeys still the
+             productions of the grammar in the former STX draft
+             (<a target="_blank" href="http://stx.sourceforge.net/documents/spec-stx-20030505.html#stxpath">5 May 2003</a>)</li>
+         <li>all STX elements and functions not explicitely mentioned
+             on this page wait for an implementation</li>
+         <li>...</li>
+      </ul>
+
+
+      <h2><a name="extensions">Extensions</a></h2>
+      
+      <h5><a name="html">HTML output</a></h5>
+      <p>
+        <em>Joost</em> provides an experimental HTML 4.01 output method that
+        can be invoked by specifying <code>joost:html</code> in the
+        <code>output-method</code> attribute. The prefix <code>joost</code>
+        must be bound to <em>Joost</em>'s extension namespace
+        <code>http://joost.sf.net/extension</code>. CDATA boundaries will
+        not be printed in HTML. This means for HTML output the
+        <code>disable-output-escaping</code> feature of XSLT may be
+        simulated by using the <code>stx:cdata</code> instruction.
+      </p>
+          
+      <hr>
+
+      <h5><a name="doe">Disable output escaping</a></h5>
+      <p>
+        Though both STX and <em>Joost</em> don't have a feature for disabling
+        output escaping in the language (unlike XSLT 1.0), it may happen that
+        an XSLT process invoked via a filter (<code>filter-method</code>)
+        produces output using the 
+        <code><a target="_blank" href="http://www.w3.org/TR/xslt#disable-output-escaping">disable-output-escaping</a></code>
+        attribute. As specified by the JAXP API, this information is passed
+        via corresponding processing instructions, see 
+        <code><a target="_blank" href="http://java.sun.com/j2se/1.4.2/docs/api/javax/xml/transform/Result.html#PI_DISABLE_OUTPUT_ESCAPING">PI_DISABLE_OUTPUT_ESCAPING</a></code> and
+        <code><a target="_blank" href="http://java.sun.com/j2se/1.4.2/docs/api/javax/xml/transform/Result.html#PI_ENABLE_OUTPUT_ESCAPING">PI_ENABLE_OUTPUT_ESCAPING</a></code> in
+        the API documentation of the
+        <a target="_blank" href="http://java.sun.com/j2se/1.4.2/docs/api/javax/xml/transform/Result.html">Result</a>
+        interface. By default, <em>Joost</em> will copy these processing 
+        instructions to the output without special treatment, i.e. normal 
+        output escaping will be applied.
+      </p>
+      <p>
+        However, <em>Joost</em> provides two ways to enable the handling of
+        <code>disable-output-escaping</code> related processing instructions 
+        in the XML and HTML serializer, i.e. output escaping can be switched 
+        off and on accordingly:
+      </p>
+      <ul>
+        <li>
+          on the command line by using the <code>-doe</code> parameter
+        </li>
+        <li>
+          in the API by setting an output property via
+          <code><a target="_blank" href="http://java.sun.com/j2se/1.4.2/docs/api/javax/xml/transform/Transformer.html#setOutputProperty(java.lang.String,%20java.lang.String)">setOutputProperty</a></code>
+          or
+          <code><a target="_blank" href="http://java.sun.com/j2se/1.4.2/docs/api/javax/xml/transform/Transformer.html#setOutputProperties(java.util.Properties)">setOutputProperties</a></code>
+          in the 
+          <code><a target="_blank" href="http://java.sun.com/j2se/1.4.2/docs/api/javax/xml/transform/Transformer.html">Transformer</a></code> 
+          class. 
+          <ul>
+          <li>The property key is the string 
+          <code>{http://joost.sf.net/extension}support-disable-output-escaping</code>
+          (which is <code>support-disable-output-escaping</code> in the
+          <em>Joost</em> extension namespace). 
+          </li>
+          <li>
+          The property value may be either
+          <code>yes</code> or <code>no</code>.
+          </li>
+          </ul>
+        </li>
+      </ul>
+      <p>
+        <em>Joost</em> cannot distinguish between "technical" processing
+        instructions that stem from an <code>disable-output-escaping</code>
+        attribute in an XSLT transformation and "real" processing instructions
+        that have been produced via an <code>stx:processing-instruction</code>
+        instruction. Therefore it is possible to imitate XSLT's 
+        <code>disable-output-escaping</code> via
+        <pre>
+  &lt;stx:processing-instruction name="javax.xml.transform.disable-output-escaping" />
+  ... some text that should be printed without output escaping
+  &lt;stx:processing-instruction name="javax.xml.transform.enable-output-escaping" />
+        </pre>
+        
+      </p>
+      
+      <hr>
+
+      <h5><a name="scripting">Scripting</a></h5>
+      <p>
+        This release of <em>Joost</em> introduces experimental support for 
+        scripting languages. It uses the bean scripting framework BSF (see 
+        above) as a bridge to concrete scripting engines.
+      </p>
+      <p>
+        The new element <code>joost:script</code> defines a script. The prefix 
+        (in this case <code>joost</code>) must be bound to <em>Joost</em>'s 
+        extension namespace <code>http://joost.sf.net/extension</code>. 
+        The element <code>joost:script</code> must be a child of 
+        <code>stx:transform</code> or <code>stx:group</code> and allows only 
+        text contents. It has the following attributes:
+      </p>
+      <ul>
+        <li>
+          <code>prefix</code>: the namespace prefix that defines the functions
+          of this script. The namespace must be in scope for the 
+          <code>script</code> element. The invocation of script functions
+          requires the use of this prefix.
+        </li>
+        <li>
+          <code>language</code>: the language identifier, that is used by BSF 
+          to find the proper scripting engine.
+        </li>
+        <li>
+          <code>url</code> (optional): the URL of an external script
+        </li>
+      </ul>
+      <p><strong>Example</strong> that uses Javascript 
+      (<a target="_blank" href="http://www.mozilla.org/rhino/">Rhino</a>):</p>
+      <pre>&lt;stx:transform xmlns:stx="http://stx.sourceforge.net/2002/ns" 
+               <strong>xmlns:joost="http://joost.sf.net/extension"
+               xmlns:js="urn:javascript"</strong>
+               version="1.0">
+
+  <strong>&lt;joost:script prefix="js" language="javascript">
+  &lt;![CDATA[
+    function fac(n) {
+      var res = 1;
+      while (n > 1) {
+        res = res * n;
+        n--;
+      }
+      return res;
+    }
+  ]]>
+  &lt;/joost:script></strong>
+
+  &lt;stx:template match="/">
+    &lt;stx:value-of select="concat('5! = ', <strong>js:fac(5)</strong>)" />
+  &lt;/stx:template>
+
+&lt;/stx:transform></pre>
+      <p>This "transformation" will output<br>
+      5! = 120</p>
+      <p>
+        <em>Note</em>: global script variables will be initialized only once at 
+        the moment. This is important for re-used transformation sheets via
+        JAXP <code>Templates</code> objects.
+      </p>
+      
+      <hr>
+
+      <h5><a name="java">Invoking Java methods</a></h5>
+      <p>
+        <em>Joost</em> allows the use of extension functions written in Java.
+        An extension function is invoked using the notation
+        <code>prefix:localname(<em>params?</em>)</code>. The
+        <code>prefix</code> must be bound to a namespace indicating the Java
+        class to which the function belongs. This namespace must use the URN
+        notation "<code>java:</code>" followed by the full-qualified class
+        name, for example "<code>java:java.util.Random</code>". The
+        referenced class must be found in the current classpath.
+      </p>
+      <p>
+        The rules for invoking Java extension functions are similar to those
+        used by Saxon or Xalan:
+      </p>
+      <ul>
+        <li>
+          <p>
+            A <strong>static method</strong> can be invoked directly.
+            The local name of the function must match the name of a public
+            static method in this class. The names match if they contain
+            the same characters, excluding hyphens and forcing any character
+            that follows a hyphen to upper-case. For example the STXPath
+            function call <code>prefix:to-string()</code> matches the Java
+            method <code>toString();</code> but if you prefer, the function
+            call can also be written as <code>prefix:toString()</code>.
+          </p>
+          <p>
+            The number of the arguments supplied to the function call must
+            match exactly the number of the parameters of the Java method.
+            If there are more than one candidate, <em>Joost</em> attempts
+            to find the one that is the best fit to the types of the
+            supplied arguments (see <em>Conversion rules</em> below).
+            <em>Joost</em> will report an error if no matching method at
+            all can be found, or if several methods may be used but none
+            is preferable to the others.
+          </p>
+          <p>
+            Example:
+            <br> 
+            <code>&lt;stx:value-of select="math:sqrt($arg)"
+                  xmlns:math="java:java.lang.Math"/&gt;</code>
+          </p>
+        </li>
+        <li>
+          <p>
+            A <strong>constructor</strong> is invoked by using a function
+            named <code>prefix:new</code>. If there are several constructors,
+            then again <em>Joost</em> tries to find the one that is the best
+            fit, according to the types of the supplied arguments. The result
+            of invoking <code>new()</code> is an STXPath value of type Java
+            Object; the only things that can be done with a Java Object are
+            to assign it to a variable, to pass it to an extension function,
+            and to convert it to a <code>string</code>, <code>number</code>,
+            or <code>boolean</code>, using the rules given below.
+          </p>
+        </li>
+        <li>
+          <p>
+            An <strong>instance-level method</strong> is invoked by supplying
+            an extra first argument of type Java Object which is the object
+            on which the method is to be invoked. Matching of method names
+            is done as for static methods.
+          </p>
+          <p>
+            Example: <br>
+            <code>&lt;stx:value-of select="date:to-string(date:new())"
+                  xmlns:date="java:java.util.Date" /&gt;</code>
+          </p>
+        </li>
+      </ul>
+      <p>
+        It is recommended not to invoke an extension function having
+        side-effects within the predicates of a match pattern, because
+        the order of these function calls and whether such a function
+        will be used at all is undefined (implementation dependent).<br>
+        (For example in
+        <code>match="a[ex:foo()]//b[ex:bar()]/c[ex:baz()]"</code>)
+      </p>
+      <p>
+        <strong><em>Conversion rules</em></strong><br>
+        Depending on the type of the argument values supplied to the function
+        call, <em>Joost</em> tries to find a method that has parameters of
+        the following types (Java types with a higher conversion preference
+        appear first in the list; if one parameter is of a primitve type and
+        the argument in the function call is a non-empty sequence, only the
+        first item will be considered):
+      </p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>supplied STXPath type</th>
+          <th>required Java type</th>
+        </tr>
+        <tr>
+          <td>empty sequence</td>
+          <td><code>java.util.List</code>, <code>java.lang.Object</code>
+              (or a derived type, i.e. a reference type)</td>
+        </tr>
+        <tr>
+          <td><code>boolean</code></td>
+          <td><code>boolean</code>, <code>byte</code>, <code>short</code>,
+              <code>int</code>, <code>long</code>, <code>char</code>,
+              <code>java.lang.String</code>, <code>float</code>,
+              <code>double</code>, <code>java.util.List</code>,
+              <code>java.lang.Object</code></td>
+        </tr>
+        <tr>
+          <td><code>number</code></td>
+          <td><code>double</code>, <code>float</code>, <code>long</code>,
+              <code>int</code>, <code>short</code>, <code>byte</code>,
+              <code>java.lang.String</code>, <code>char</code>,
+              <code>boolean</code>, <code>java.util.List</code>,
+              <code>java.lang.Object</code></td>
+        </tr>
+        <tr>
+          <td><code>node</code>, <code>string</code></td>
+          <td><code>java.lang.String</code>, <code>char</code>,
+              <code>double</code>, <code>float</code>, <code>int</code>,
+              <code>long</code>, <code>short</code>, <code>byte</code>,
+              <code>boolean</code>, <code>java.util.List</code>,
+              <code>java.lang.Object</code></td>
+        </tr>
+        <tr>
+          <td>wrapped Java Object</td>
+          <td>same type, base type, <code>java.lang.Object</code>,
+              <code>java.util.List</code>, <code>java.lang.String</code></td>
+        </tr>
+      </table>
+      <p>
+        If the target type is <code>java.lang.Object</code> then a conversion
+        according to the following table will be performed. If the target type
+        is <code>java.util.List</code> then a <code>java.util.ArrayList</code>
+        will be constructed containing a list of
+        <code>java.lang.Object</code>s (see table) for each of the items. An
+        empty sequence will be represented as an empty list (not as a list
+        with a <code>null</code> member).
+      </p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>supplied STXPath type</th>
+          <th>target type <code>java.lang.Object</code></th>
+        </tr>
+        <tr>
+          <td>empty sequence</td>
+          <td><code>null</code></td>
+        </tr>
+        <tr>
+          <td><code>boolean</code></td>
+          <td><code>java.lang.Boolean</code> containing the boolean value</td>
+        </tr>
+        <tr>
+          <td><code>number</code></td>
+          <td><code>java.lang.Double</code> containing the number</td>
+        </tr>
+        <tr>
+          <td><code>string</code></td>
+          <td><code>java.lang.String</code></td>
+        </tr>
+        <tr>
+          <td><code>node</code></td>
+          <td><code>java.lang.String</code> containing the node value</td>
+        </tr>
+        <tr>
+          <td>wrapped Java Object</td>
+          <td>the object itself</td>
+        </tr>
+      </table>
+
+      <p>
+        The result of a function call will be converted as follows:
+      </p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>return type</th>
+          <th>STXPath type / value</th>
+        </tr>
+        <tr>
+          <td><code>void</code></td>
+          <td>empty sequence</td>
+        </tr>
+        <tr>
+          <td><code>java.lang.String</code>, <code>char</code></td>
+          <td><code>string</code></td>
+        </tr>
+        <tr>
+          <td><code>boolean</code></td>
+          <td><code>boolean</code></td>
+        </tr>
+        <tr>
+          <td><code>double</code>, <code>float</code>, <code>byte</code>,
+              <code>short</code>, <code>int</code>, <code>long</code></td>
+          <td><code>number</code></td>
+        </tr>
+        <tr>
+          <td>anything else, i.e. any reference type, including the value
+              <code>null</code></td>
+          <td>wrapped Java Object</td>
+        </tr>
+      </table>
+      <p>
+        A wrapped Java Object may be converted to another data type as
+        follows.
+      </p>
+      <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+          <th>required type</th>
+          <th>conversion rule</th>
+        </tr>
+        <tr>
+          <td><code>node</code></td>
+          <td>not possible</td>
+        </tr>
+        <tr>
+          <td><code>string</code></td>
+          <td><code>null</code> will be converted to the empty string,
+              any other object will be converted by invoking its
+              <code>toString()</code> method</td>
+        </tr>
+        <tr>
+          <td><code>boolean</code></td>
+          <td><code>null</code> will be converted to <code>false</code>,
+              any other object will be converted via a
+              <code>string</code> conversion and then applying the
+              STXPath function <code>boolean()</code></td>
+        </tr>
+        <tr>
+          <td><code>number</code></td>
+          <td>via a <code>string</code> conversion and then applying the
+              STXPath function <code>number()</code></td>
+        </tr>
+      </table>
+
+      <p>
+        <a name="ext-sequence"></a>
+        A wrapped Java Object of type <code>java.lang.Object[]</code> or
+        <code>java.util.List</code> may be converted to a sequence using
+        the <em>Joost</em> extension function <code>sequence</code>.
+        If the supplied parameter is neither an array nor a
+        <code>java.util.List</code> object, this function returns its
+        parameter.
+      </p>
+
+      <hr>
+
+      <h5><a name="filters">Using external SAX2 filters</a></h5>
+      <p>
+        <em>Joost</em> implements the usage of external SAX2 filters as
+        described in the 
+        <a target="_blank" href="http://stx.sourceforge.net/documents/spec-stx-20070427.html#external-filters">STX 
+        specification section 5.18</a>.
+        <em>Joost</em> uses the TrAX API to instantiate an XSLT transformer
+        object. The actual XSLT implementation (i.e. the
+        <code>javax.xml.transform.TransformerFactory</code>) to be used may
+        be controlled by setting the property
+        <code>net.sf.joost.trax.TrAXConstants.KEY_XSLT_FACTORY</code>, either
+        as a system property or using
+        <code>TransformerFactory.setAttribute</code>.
+      </p>
+      <p>
+        Besides the XSLT (<code>http://www.w3.org/1999/XSL/Transform</code>)
+        and STX (<code>http://stx.sourceforge.net/2002/ns</code>) filter
+        methods, <em>Joost</em> provides built-in implementations for the
+        following two additional values of the <code>filter-method</code>
+        attribute:
+      </p>
+      <dl>
+        <dt><strong><code>http://xml.org/sax</code></strong></dt>
+        <dd>Provides a SAX parser. All character data will be fed into the
+        parser, all other events will be ignored. The events generated by the
+        parser constitute the result of this filter.</dd>
+        <dt><strong><code>http://www.ietf.org/rfc/rfc2616.txt#POST</code></strong></dt>
+        <dd>Sends the filter input data per HTTP-POST request to the URL
+        specified in the required <code>target</code> parameter
+        (i.e. <code>&lt;stx:param name="target" ... &gt;</code>). The data of
+        the HTTP response are the result of this filter. The HTTP-POST filter
+        can be used to access web services from STX.</dd>
+      </dl>
+      <p>
+        A custom filter implementation must support the
+        <code>javax.xml.transform.sax.TransformerHandler</code> interface.
+        Such a filter can be invoked by implementing a
+        <code>net.sf.joost.TransformerHandlerResolver</code> object which
+        returns the filter object for a requested filter URI. This resolver
+        must be registered using the property
+        <code>net.sf.joost.trax.TrAXConstants.KEY_TH_RESOLVER</code>
+        in the <code>TransformerFactory.setAttribute</code> method, or
+        by invoking <code>setTransformerHandlerResolver</code> on a
+        <code>net.sf.joost.stx.Processor</code> object. There is an example
+        implementation of a filter and an appropriate resolver in the
+        <code>src-samples</code> directory
+        (shipped with the source release only).
+      </p>
+
+      <hr>
+
+      <h5><a name="outputuriresolver">OutputURIResolver</a></h5>
+      <p><em>Joost</em> provides the interface <code>OutputURIResolver</code>
+        that acts as the counterpart to the JAXP <code>URIResolver</code>. With
+        the help of this interface the user can define what kind of result
+        document should be created for a <code>stx:result-document</code>
+        instruction. If an <code>OutputURIResolver</code> has been defined then
+        <em>Joost</em> invokes its <code>resolve</code> method every time it 
+        encounters the instruction <code>stx:result-document</code>. The 
+        resolver may return a <code>Result</code> instance or <code>null</code>
+        if the default implementation should be used.</p>
+      <p>An <code>OutputURIResolver</code> must be registered using the
+        property <code>http://joost.sf.net/attributes/output-uri-resolver</code>
+        in the <code>TransformerFactory.setAttribute</code> method, or
+        by invoking <code>setOutputURIResolver</code> on a
+        <code>net.sf.joost.stx.Processor</code> object.</p>
+
+
+      <h2><a name="examples">Examples</a></h2>
+      <p>
+        The current release contains an <code>example</code> directory with a
+        set of selected STX examples. In addition you may browse
+        <em>Joost</em>'s CVS <a target="_blank"
+        href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/joost/test/">test</a>
+        directory as well as the <a target="_blank"
+        href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/stx/stx/examples/">examples</a> directory from the STX CVS tree.
+      </p>
+
+
+      <h2><a name="resources">Resources</a></h2>
+      <ul>
+        <li>This release implements (partly) the 
+            <a target="_blank" href="http://stx.cvs.sourceforge.net/*checkout*/stx/specs/spec-stx.html?revision=1.64">STX Working Draft, 02 March 2008</a>
+            (<b>Note:</b> this version hasn't been released yet)</li>
+        <li>The functions taken from the W3C spec are defined in
+         <a target="_blank" href="http://www.w3.org/TR/2003/WD-xpath-functions-20031112/">XQuery 1.0 and XPath 2.0 Functions and Operators, W3C Working Draft 12 November 2003</a></li>
+      </ul>
+      <ul>
+        <li><a target="_blank" href="http://www.xml.com/pub/a/2003/02/26/stx.html">An
+            Introduction to Streaming Transformations for XML</a>,
+            Article on <a target="_blank" href="http://xml.com/">xml.com</a>,
+            26 February 2003</li>
+        <li><a target="_blank" href="http://www.idealliance.org/papers/dx_xmle03/papers/04-02-02/04-02-02.html">Transforming XML on the Fly</a>, Presentation at
+            XML Europe 2003, London, 5-8 May 2003</li>
+        <li><a target="_blank" href="http://www.informatik.hu-berlin.de/~obecker/Docs/EML2003/">Extended SAX Filter Processing with STX</a>, Presentation at Extreme
+            Markup Languages, Montr&eacute;al, 4-8 August 2003</li>
+      </ul>
+
+
+      <h2><a name="contributors">Contributors</a></h2>
+      <ul>
+        <li><a target="_blank" href="http://instantolap.net/">Thomas Behrends</a></li>
+        <li>Nikolay Fiykov</li>
+        <li><a target="_blank" href="http://www.informatik.hu-berlin.de/~zubow/">Anatolij
+            Zubow</a></li>
+      </ul>
+      <ul>
+        <li><em>Joost</em> is supported by the <strong>
+            <a target="_blank" href="http://www.yourkit.com/">YourKit Java Profiler</a>
+            </strong></li>
+      </ul>
+
+      <hr size="1" noshade>
+
+      <p>
+        <span style="float: right;">
+          <a target="_blank" href="http://sourceforge.net/projects/joost"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=55258&type=16" width="150" height="40" border="0" alt="Get Joost STX processor at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
+        </span>
+        <strong>Have fun!</strong>
+        <br><br>
+        <span style="font-size: small">
+          <a target="_blank"
+             href="http://www.obqo.de/">ob</a> / 2009-09-26
+        </span>
+      </p>
+      
+      <!-- Piwik -->
+      <script type="text/javascript">
+        var pkBaseURL = (("https:" == document.location.protocol) ? "https://apps.sourceforge.net/piwik/joost/" : "http://apps.sourceforge.net/piwik/joost/");
+        document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+      </script>
+      <script type="text/javascript">
+        piwik_action_name = '';
+        piwik_idsite = 1;
+        piwik_url = pkBaseURL + "piwik.php";
+        piwik_log(piwik_action_name, piwik_idsite, piwik_url);
+      </script>
+      <object><noscript><p><img src="http://apps.sourceforge.net/piwik/joost/piwik.php?idsite=1" alt="piwik"/></p></noscript></object>
+      <!-- End Piwik Tag --> 
+   </body>
+</html>
